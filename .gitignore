@@ -35,6 +35,9 @@ CLAUDE.md
 # Dev utilities
 take-screenshot.ps1
 
+# Internal drone staging (never ship)
+staging/
+
 # Internal Kingdom planning docs (do not ship)
 BLACKBOARD.json
 NORTH_STAR.md
