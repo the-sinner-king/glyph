@@ -1,0 +1,246 @@
+/* GLYPH Animation Keyframes */
+/* Typing effects, loading states, transitions */
+
+/* Typing cursor blink */
+@keyframes cursor-blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+.cursor-blink {
+  animation: cursor-blink 1s step-end infinite;
+}
+
+/* Typing text reveal - character by character feel */
+@keyframes type-reveal {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+.type-reveal {
+  overflow: hidden;
+  white-space: nowrap;
+  animation: type-reveal 2s steps(40, end);
+}
+
+/* Fade in from below */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in-up {
+  animation: fade-in-up 0.5s ease-out forwards;
+}
+
+/* Fade in with scale */
+@keyframes fade-in-scale {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.fade-in-scale {
+  animation: fade-in-scale 0.3s ease-out forwards;
+}
+
+/* Loading spinner - terminal style */
+@keyframes terminal-spin {
+  0% { content: "|"; }
+  25% { content: "/"; }
+  50% { content: "-"; }
+  75% { content: "\\"; }
+  100% { content: "|"; }
+}
+
+/* Loading dots animation */
+@keyframes loading-dots {
+  0%, 20% { content: "."; }
+  40% { content: ".."; }
+  60% { content: "..."; }
+  80%, 100% { content: ""; }
+}
+
+/* Pulse glow for processing states */
+@keyframes glow-pulse {
+  0%, 100% {
+    text-shadow:
+      0 0 5px color-mix(in srgb, var(--theme-primary) 50%, transparent),
+      0 0 10px color-mix(in srgb, var(--theme-primary) 30%, transparent);
+    opacity: 0.8;
+  }
+  50% {
+    text-shadow:
+      0 0 10px color-mix(in srgb, var(--theme-primary) 80%, transparent),
+      0 0 20px color-mix(in srgb, var(--theme-primary) 50%, transparent),
+      0 0 30px color-mix(in srgb, var(--theme-primary) 30%, transparent);
+    opacity: 1;
+  }
+}
+
+.glow-pulse {
+  animation: glow-pulse 2s ease-in-out infinite;
+}
+
+/* ASCII art reveal - line by line */
+@keyframes ascii-reveal {
+  from {
+    clip-path: inset(0 0 100% 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+.ascii-reveal {
+  animation: ascii-reveal 1s ease-out forwards;
+}
+
+/* Stagger delay utilities for lists */
+.stagger-1 { animation-delay: 0.1s; }
+.stagger-2 { animation-delay: 0.2s; }
+.stagger-3 { animation-delay: 0.3s; }
+.stagger-4 { animation-delay: 0.4s; }
+.stagger-5 { animation-delay: 0.5s; }
+
+/* Matrix-style vertical drop */
+@keyframes matrix-drop {
+  0% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh);
+    opacity: 0;
+  }
+}
+
+/* Horizontal scan effect for generation */
+@keyframes horizontal-scan {
+  0% {
+    background-position: -100% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.horizontal-scan {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    color-mix(in srgb, var(--theme-primary) 30%, transparent) 50%,
+    transparent 100%
+  );
+  background-size: 50% 100%;
+  animation: horizontal-scan 2s linear infinite;
+}
+
+/* Shake effect for errors */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+  20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+.shake {
+  animation: shake 0.5s ease-in-out;
+}
+
+/* Success checkmark draw */
+@keyframes draw-check {
+  0% {
+    stroke-dashoffset: 100;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Slide in from left */
+@keyframes slide-in-left {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.slide-in-left {
+  animation: slide-in-left 0.3s ease-out forwards;
+}
+
+/* Slide in from right */
+@keyframes slide-in-right {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.slide-in-right {
+  animation: slide-in-right 0.3s ease-out forwards;
+}
+
+/* Expand from center */
+@keyframes expand-center {
+  from {
+    transform: scaleX(0);
+    opacity: 0;
+  }
+  to {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+}
+
+.expand-center {
+  transform-origin: center;
+  animation: expand-center 0.3s ease-out forwards;
+}
+
+/* Text scramble effect helper */
+.text-scramble {
+  position: relative;
+}
+
+/* Breathing effect for idle states */
+@keyframes breathe {
+  0%, 100% {
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.breathe {
+  animation: breathe 3s ease-in-out infinite;
+}
+
+/* CRAFT mode skeleton shimmer */
+@keyframes skeleton-shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}

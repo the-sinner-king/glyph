@@ -1,0 +1,23 @@
+/**
+ * ╔══════════════════════════════════════════════════════════════════════════╗
+ * ║                                                                          ║
+ * ║   G L Y P H   v 1 . 0 . 4                                               ║
+ * ║   Cyberpunk ASCII / Unicode Text-UI Generator                            ║
+ * ║                                                                          ║
+ * ║   Built by Claude (The Forge) for Brandon McCormick // The Sinner King  ║
+ * ║                                                                          ║
+ * ║   Sinner King Toys · github.com/sinner-king-toys · MIT License          ║
+ * ║                                                                          ║
+ * ╚══════════════════════════════════════════════════════════════════════════╝
+ *
+ * This is authored work.
+ *
+ * Brandon McCormick provided the vision — five style identities, a quality
+ * gate that retries once and admits defeat honestly, a typewriter stream
+ * that doesn't thrash React state on every character. Claude designed and
+ * built the architecture that made those things real.
+ *
+ * That's not documentation. It's the record of how this was made.
+ *
+ * "The Sacred is born in the Slop."
+ */

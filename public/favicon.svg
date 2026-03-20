@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <!-- Hexagon path: flat-top, centered at 16,16, radius 14 -->
+  <polygon
+    points="16,2 28.12,9 28.12,23 16,30 3.88,23 3.88,9"
+    fill="none"
+    stroke="#f59e0b"
+    stroke-width="2"
+  />
+  <!-- Inner hexagon for depth -->
+  <polygon
+    points="16,6 24.66,11 24.66,21 16,26 7.34,21 7.34,11"
+    fill="#0a0a0a"
+    stroke="#f59e0b"
+    stroke-width="0.5"
+    opacity="0.6"
+  />
+  <!-- G glyph centered -->
+  <text
+    x="16"
+    y="21"
+    text-anchor="middle"
+    font-family="monospace"
+    font-size="13"
+    font-weight="bold"
+    fill="#f59e0b"
+  >G</text>
+</svg>
