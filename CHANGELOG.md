@@ -2,6 +2,19 @@
 
 ---
 
+## [2026-03-23] v1.0.4 — README output gallery, AI credit, dead code removal
+
+### Added
+- **Output gallery** — 5 hand-crafted examples in README, one per style identity (SOVEREIGN, WRAITH, RELIC, FERAL, SIEGE). Each example is genuine to its aesthetic's design philosophy, not decorative filler.
+- **"How We Build" section** — replaced one-line AI credit footnote with honest, prominent section: Brandon directs, Claude builds, every commit carries `Co-Authored-By: Claude Sonnet 4.6`.
+- **Neofetch callout** — added to intro paragraph: "Works great for neofetch/fastfetch headers, README banners, terminal dashboards."
+- **Claude badge** — `Built with Claude` badge added to shields row.
+
+### Removed
+- **`mode-toggle.tsx`** — dead component with no callers. Mode is hardcoded to `'slop'` in generator.tsx; the toggle UI was removed in an earlier session but the file persisted.
+
+---
+
 ## [1.0.1] — 2026-03-19
 
 ### Fixed
