@@ -30,6 +30,7 @@ interface StorageSettings {
   defaultStyle: string
   defaultBorder: string
   modelName: string     // Gemini model ID — user-configurable, defaults to Flash 3
+  enhanceMode: boolean  // Auto-expand short prompts before generation
 }
 
 const DEFAULT_SETTINGS: StorageSettings = {
@@ -43,6 +44,7 @@ const DEFAULT_SETTINGS: StorageSettings = {
   defaultStyle: 'sovereign',
   defaultBorder: 'single',
   modelName: 'gemini-3-flash-preview',
+  enhanceMode: true,    // ON by default — better output for short prompts
 }
 
 // ─── History ──────────────────────────────────────────────────────────────────

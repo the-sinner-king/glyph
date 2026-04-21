@@ -25,6 +25,7 @@ import { ApiKeyModal } from './api-key-modal'
 import { HistoryPanel } from './history-panel'
 import { FavoritesPanel } from './favorites-panel'
 import { TitleForge } from './title-forge'
+import { TitleForgeBanner } from './title-forge-banner'
 import { ShortcutsModal } from './shortcuts-modal'
 import { GeneratorOptions } from './generator-options'
 import { useKeyboardShortcuts } from '@/hooks'
@@ -34,6 +35,7 @@ import {
   saveToHistory,
   getSettings,
   saveSettings,
+  applyFigletTitles,
 } from '@/lib/services'
 import type {
   GeneratedTemplate,
@@ -48,7 +50,7 @@ import { CONFIG, COLOR_THEMES, FIGLET_FONTS, type ColorThemeId } from '@/lib/con
 // CRAFT PHASE — internal state for CRAFT mode UI feedback
 // ============================================================================
 
-type CraftPhase = 'architect' | 'refining' | null
+type CraftPhase = 'architect' | 'refining' | 'expanding' | null
 
 // ============================================================================
 // HISTORY MIGRATION — v1 had templates: [...], v2 has template: {...}
@@ -165,6 +167,7 @@ export function Generator() {
   const [currentPrompt, setCurrentPrompt] = useState('')
   const [error, setError]             = useState<string | null>(null)
   const mode: GenerationMode          = 'slop'
+  const [enhanceMode, setEnhanceMode] = useState(() => getSettings().enhanceMode ?? true)
   const [activeSkills, setActiveSkills] = useState<ActiveSkillsMap>(createEmptyActiveSkills)
   const [isStalled, setIsStalled]     = useState(false)
   const [retryMessage, setRetryMessage] = useState<string | null>(null)
@@ -324,6 +327,14 @@ export function Generator() {
   // --------------------------------------------------------------------------
   // Generate
   // --------------------------------------------------------------------------
+  const handleEnhanceModeToggle = useCallback(() => {
+    setEnhanceMode(prev => {
+      const next = !prev
+      saveSettings({ enhanceMode: next })
+      return next
+    })
+  }, [])
+
   const handleAbortGeneration = useCallback(() => {
     abortRef.current?.abort()
     if (stallTimerRef.current) clearTimeout(stallTimerRef.current)
@@ -379,9 +390,20 @@ export function Generator() {
 
     scheduleStallCheck(signal)
 
+    // Prompt enhancement — call Flash pre-pass to expand short prompts into
+    // visually rich descriptions before sending to the main generation model.
+    let effectivePrompt = prompt
+    if (enhanceMode && prompt.trim().length < 120) {
+      setCraftPhase('expanding')
+      effectivePrompt = await geminiService.enhancePrompt(prompt)
+      if (signal.aborted) return
+      setCraftPhase(null)
+      setCurrentPrompt(effectivePrompt)
+    }
+
     try {
       await geminiService.generateTemplate(
-        prompt,
+        effectivePrompt,
         generatorOptions,
         mode,
         activeSkills,
@@ -422,13 +444,19 @@ export function Generator() {
             }, 500)
           },
 
-          onComplete: (content, quality) => {
+          onComplete: async (content, quality) => {
             if (signal.aborted) return
             if (stallTimerRef.current) clearTimeout(stallTimerRef.current)
             if (streamRafRef.current) cancelAnimationFrame(streamRafRef.current)
             setCraftPhase(null)
 
-            const dims = computeDimensions(content)
+            // Post-process: replace [FIGLET: TEXT] markers with rendered ASCII art.
+            // applyFigletTitles is near-instant for Standard; ANSI Shadow fetches once
+            // then is cached by figlet for the session. Falls back to plain text on error.
+            const processedContent = await applyFigletTitles(content)
+            if (signal.aborted) return
+
+            const dims = computeDimensions(processedContent)
             const now = Date.now()
 
             // AC-12p: Capture qualityScore from quality parameter
@@ -447,13 +475,13 @@ export function Generator() {
               id: crypto.randomUUID(),
               template: {
                 id: `template-${now}`,
-                content,
+                content: processedContent,
                 style: generatorOptions.style,
                 font: FIGLET_FONTS[0],
                 ...dims,
                 createdAt: now,
               },
-              prompt,
+              prompt: effectivePrompt,
               processingTime: now - startTimeRef.current,
               mode,
               activeSkills: getActiveSkillIds(activeSkills),
@@ -461,7 +489,7 @@ export function Generator() {
             }
 
             setResult(generationResult)
-            setStreamingContent(content)
+            setStreamingContent(processedContent)
             // AC-10u: onComplete fires for both modes — this is the single transition
             // to 'success' for CRAFT mode (first time it leaves 'generating').
             setStatus('success')
@@ -491,7 +519,7 @@ export function Generator() {
       setError(err instanceof Error ? err.message : 'Generation failed')
       setStatus('error')
     }
-  }, [isDemoMode, generatorOptions, mode, activeSkills, scheduleFlush, clearStream, scheduleStallCheck])
+  }, [isDemoMode, generatorOptions, mode, enhanceMode, activeSkills, scheduleFlush, clearStream, scheduleStallCheck])
 
   const handleHistoryLoad = useCallback((histResult: GenerationResult) => {
     setResult(histResult)
@@ -542,7 +570,8 @@ export function Generator() {
 
   const renderIdleState = () => (
     <motion.div key="idle" {...ANIMATION.fadeUp} transition={ANIMATION.transition} className="w-full space-y-4">
-      <CommandInput onSubmit={handleGenerate} placeholder="DESCRIBE YOUR TEXT-UI TEMPLATE..." autoFocus showExamples />
+      <CommandInput onSubmit={handleGenerate} placeholder="DESCRIBE YOUR TEXT-UI TEMPLATE..." autoFocus showExamples enhanceMode={enhanceMode} onEnhanceToggle={handleEnhanceModeToggle} />
+      <TitleForgeBanner onOpen={() => setShowTitleForge(true)} />
     </motion.div>
   )
 
@@ -590,7 +619,7 @@ export function Generator() {
   const renderSuccessState = () => (
     <motion.div key="success" {...ANIMATION.fadeUp} transition={ANIMATION.transition} className="w-full space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <CommandInput onSubmit={handleGenerate} placeholder="GENERATE ANOTHER..." autoFocus={false} showExamples={false} />
+        <CommandInput onSubmit={handleGenerate} placeholder="GENERATE ANOTHER..." autoFocus={false} showExamples={false} enhanceMode={enhanceMode} onEnhanceToggle={handleEnhanceModeToggle} />
       </div>
 
       {/* Prompt reminder */}
@@ -700,7 +729,9 @@ export function Generator() {
       {/* Top bar */}
       <div className="fixed right-4 z-40 flex gap-2" style={{ top: isDemoMode ? '2.5rem' : '1rem' }}>
         <CyberButton variant="ghost" onClick={() => setShowShortcutsModal(true)} className="p-2 font-mono" aria-label="Keyboard shortcuts" title="Keyboard Shortcuts (?)">?</CyberButton>
-        <CyberButton variant="ghost" onClick={() => setShowTitleForge(true)} className="p-2 font-mono" aria-label="Title Forge big text mode" title="Title Forge — Big Text (figlet fonts)">⬡</CyberButton>
+        {status !== 'idle' && (
+          <CyberButton variant="ghost" onClick={() => setShowTitleForge(true)} className="p-2 font-mono" aria-label="Title Forge big text mode" title="Title Forge — Big Text (figlet fonts)">⬡</CyberButton>
+        )}
         <CyberButton variant="ghost" onClick={() => setShowFavoritesPanel(true)} className="p-2 font-mono" aria-label="Saved templates" title="Saved Templates (★)">★</CyberButton>
         <CyberButton variant="ghost" onClick={() => setShowHistoryPanel(true)} className="p-2 font-mono" aria-label="Generation history" title="Generation History">☰</CyberButton>
         <CyberButton variant="ghost" onClick={() => setShowApiKeyModal(true)} className="p-2 font-mono" aria-label="API key settings" title="API Key Settings">⚙</CyberButton>
@@ -782,7 +813,7 @@ function BouncingGauge({ prompt, phase }: { prompt: string; phase: CraftPhase })
     return '·'
   }).join('')
 
-  const label = phase === 'architect' ? 'ARCHITECTING' : phase === 'refining' ? 'REFINING' : 'GENERATING'
+  const label = phase === 'expanding' ? 'EXPANDING PROMPT' : phase === 'architect' ? 'ARCHITECTING' : phase === 'refining' ? 'REFINING' : 'GENERATING'
 
   return (
     <div className="space-y-2">

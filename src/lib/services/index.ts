@@ -3,6 +3,7 @@ export { geminiService } from './gemini'
 
 export {
   generateAsciiText,
+  applyFigletTitles,
   createBox,
   createTitledBox,
   createProgressBar,

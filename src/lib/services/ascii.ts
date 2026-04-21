@@ -25,6 +25,7 @@ figlet.defaults({
 })
 
 type RegisteredFont = 'Standard' | 'Slant' | 'Banner'
+type AnyFigletFont = RegisteredFont | (string & {})
 
 /**
  * Renders a string as large ASCII text using figlet.
@@ -54,13 +55,15 @@ type RegisteredFont = 'Standard' | 'Slant' | 'Banner'
  */
 export function generateAsciiText(
   text: string,
-  font: RegisteredFont = 'Standard'
+  font: AnyFigletFont = 'Standard'
 ): Promise<string> {
   return new Promise((resolve, reject) => {
     figlet.text(
       text,
       {
-        font,
+        // Cast needed: figlet types only enumerate the 329-font union, but
+        // fetchFontIfMissing handles any valid font name at runtime.
+        font: font as Parameters<typeof figlet.text>[1] extends { font?: infer F } ? F : never,
         horizontalLayout: 'default',
         verticalLayout: 'default',
       },
@@ -73,6 +76,44 @@ export function generateAsciiText(
       }
     )
   })
+}
+
+/**
+ * Replaces `[FIGLET: TEXT]` markers in a template string with large ASCII art
+ * block letters rendered client-side via figlet.js.
+ *
+ * AI generation uses this marker pattern to request a rendered title. This
+ * function is called in the `onComplete` handler after generation finishes,
+ * so the raw marker appears briefly during streaming and is replaced once the
+ * full output arrives.
+ *
+ * Uses 'ANSI Shadow' font — the chunky box-drawing block letter style.
+ * Font is lazy-loaded from `public/assets/fonts/` on first use, then cached
+ * in memory by figlet for subsequent calls.
+ *
+ * Falls back to plain uppercase title text if figlet rendering fails.
+ *
+ * @param content - The generated template string, potentially containing one
+ *   or more `[FIGLET: TEXT]` markers.
+ * @returns The content with all markers replaced by rendered ASCII art.
+ */
+export async function applyFigletTitles(content: string): Promise<string> {
+  const MARKER = /\[FIGLET:\s*([^\]]{1,30})\]/gi
+  const matches = [...content.matchAll(MARKER)]
+  if (matches.length === 0) return content
+
+  let result = content
+  for (const match of matches) {
+    const titleText = match[1].trim().toUpperCase()
+    try {
+      const rendered = await generateAsciiText(titleText, 'ANSI Shadow')
+      result = result.replace(match[0], rendered.trimEnd())
+    } catch {
+      // Figlet failed — replace marker with plain uppercase title
+      result = result.replace(match[0], titleText)
+    }
+  }
+  return result
 }
 
 /**

@@ -14,11 +14,11 @@ import { CONFIG, DECORATIVE } from '@/lib/constants'
 
 // Example prompts for user inspiration
 const EXAMPLE_PROMPTS = [
-  'warning box for system alerts',
-  'retro game high score display',
-  'hacker terminal login screen',
-  'cyberpunk loading bar',
-  'ASCII art banner for README',
+  'retro arcade HIGH SCORE board',
+  'hacker terminal access control panel',
+  'cyberpunk city transit map',
+  'nuclear reactor status display',
+  'gothic library catalog entry',
 ]
 
 interface CommandInputProps {
@@ -28,6 +28,8 @@ interface CommandInputProps {
   className?: string
   autoFocus?: boolean
   showExamples?: boolean
+  enhanceMode?: boolean
+  onEnhanceToggle?: () => void
 }
 
 export function CommandInput({
@@ -37,6 +39,8 @@ export function CommandInput({
   className = '',
   autoFocus = true,
   showExamples = true,
+  enhanceMode = true,
+  onEnhanceToggle,
 }: CommandInputProps) {
   const [value, setValue] = useState('')
   const [isFocused, setIsFocused] = useState(false)
@@ -169,16 +173,37 @@ export function CommandInput({
         <span className="font-ui text-xs" style={{ color: 'color-mix(in srgb, var(--theme-dim) 70%, transparent)' }}>
           {value ? 'Press ENTER anywhere to generate' : 'Type or select a prompt'}
         </span>
-        {value && (
-          <button
-            onClick={() => setValue('')}
-            className="font-ui text-xs hover:text-[color:var(--theme-primary)] transition-colors"
-            style={{ color: 'color-mix(in srgb, var(--theme-dim) 70%, transparent)' }}
-            type="button"
-          >
-            [CLEAR]
-          </button>
-        )}
+        <div className="flex items-center gap-3">
+          {onEnhanceToggle && (
+            <button
+              onClick={onEnhanceToggle}
+              type="button"
+              title="Auto-expand short prompts into rich descriptions before generating"
+              className="font-mono text-xs px-2 py-0.5 rounded border transition-all duration-200"
+              style={{
+                borderColor: enhanceMode
+                  ? 'color-mix(in srgb, var(--theme-primary) 60%, transparent)'
+                  : 'color-mix(in srgb, var(--theme-dim) 40%, transparent)',
+                color: enhanceMode ? 'var(--theme-primary)' : 'color-mix(in srgb, var(--theme-dim) 50%, transparent)',
+                background: enhanceMode
+                  ? 'color-mix(in srgb, var(--theme-primary) 8%, transparent)'
+                  : 'transparent',
+              }}
+            >
+              ⚡ ENHANCE
+            </button>
+          )}
+          {value && (
+            <button
+              onClick={() => setValue('')}
+              className="font-ui text-xs hover:text-[color:var(--theme-primary)] transition-colors"
+              style={{ color: 'color-mix(in srgb, var(--theme-dim) 70%, transparent)' }}
+              type="button"
+            >
+              [CLEAR]
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Example prompts */}

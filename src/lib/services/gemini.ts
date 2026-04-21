@@ -176,6 +176,46 @@ Decorative   • ◆ ◇ ○ ● ◐ ◑ ★ ☆ ✓ ✗ ⚙ ⚡ ⬡ ⬢ ◈ ◉
 Arrows       → ← ↑ ↓ ↗ ↘ ↙ ↖ ▶ ◀ ▲ ▼ » «
 Tech         ⌘ ⌥ ⇧ ⏎ ⎔ ⎊ ☰ ⋮ ⋯ ≡
 
+PROMPT EXPANSION LAW:
+The user's request is a seed. Expand it into something specific and visually rich.
+Short prompts are invitations — treat them as the concept, not the full spec.
+Invent the exact content: real section headers, real labels, real values, real structure.
+
+Examples of what expansion looks like:
+  "retro high score board"
+    → Large ██ HIGH SCORE ██ banner at top in block letters
+    → RANK / PLAYER / SCORE / LEVEL table with 5-8 entries of invented arcade names
+    → Progress bars for top 3 scores
+    → Pixel-art decorative corners, scanline footer with INSERT COIN prompt
+
+  "login screen"
+    → Branded header with system name and version
+    → USERNAME / PASSWORD fields with cursor indicators
+    → Status bar: SECURE CONNECTION · AES-256 · SESSION: ACTIVE
+    → Bottom: last login timestamp, failed attempts counter
+
+  "server status"
+    → System name header with uptime clock
+    → CPU / MEMORY / DISK gauges with ████░░ bars and percentages
+    → Active process table with PID / NAME / STATUS columns
+    → Network I/O rates, alert thresholds
+
+Never generate a blank placeholder. Every section has invented but believable content.
+The output should look like a screenshot of something that actually exists.
+
+TITLE RENDERING LAW:
+The VERY FIRST LINE of every template MUST be a figlet marker:
+  [FIGLET: TITLE TEXT]
+This marker is replaced by the renderer with large block-letter ASCII art.
+Rules:
+  • 1–3 words, pure ALLCAPS, no punctuation or special characters
+  • The marker goes alone on line 1, BEFORE any box borders or decorators
+  • Choose something specific and evocative — name the actual UI concept
+  • Good titles: HIGH SCORE, ACCESS CONTROL, VOID RUNNER, REACTOR STATUS, CITY TRANSIT
+  • Bad titles: TEMPLATE, EXAMPLE, SYSTEM, any phrase over 3 words
+
+The line immediately after the marker begins the box/content structure.
+
 SCALE LAW:
 Build to the full size constraint. A template that fills its bounds commands attention.
 A cramped output is a failed output. Use the width. Use the height.
@@ -824,6 +864,35 @@ class GeminiService {
    *   abortController.signal
    * )
    */
+  /**
+   * Expands a short user prompt into a richer generation spec.
+   * Silent fallback to rawPrompt on any error — enhance is best-effort.
+   * Only called when enhanceMode is ON and prompt is under 120 chars.
+   */
+  async enhancePrompt(rawPrompt: string): Promise<string> {
+    if (!this.client) return rawPrompt
+    try {
+      const response = await this.client.models.generateContent({
+        model: MODEL_FLASH,
+        config: {
+          systemInstruction: `You expand short prompts for an ASCII/terminal UI template generator.
+Take the user's concept and add 2-3 specific visual details: structural elements, realistic content to show, aesthetic touches.
+Examples:
+  "retro high score board" → "Retro arcade high score board. Large block-letter HIGH SCORE banner at top. Table with RANK / PLAYER / SCORE columns, 8 rows of invented arcade names and scores. Progress bars for top 3. INSERT COIN prompt at the bottom."
+  "hacker login screen" → "Hacker terminal login. System name header with ACCESS CONTROL v2.4. USERNAME and PASSWORD fields with blinking cursor. Status indicators: ENCRYPTION: AES-256, CONNECTION: SECURE. Last login timestamp and failed attempts counter at the bottom."
+Keep response under 120 words. Return only the enhanced prompt — no preamble, no explanation.`,
+          temperature: 0.75,
+          maxOutputTokens: 200,
+          thinkingConfig: { thinkingBudget: 128, includeThoughts: false },
+        },
+        contents: rawPrompt,
+      })
+      return response.text?.trim() || rawPrompt
+    } catch {
+      return rawPrompt
+    }
+  }
+
   async generateTemplate(
     prompt: string,
     options: GeneratorOptions | undefined,
