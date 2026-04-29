@@ -23,7 +23,6 @@ interface TemplateDisplayProps {
   index: number
   isSelected: boolean
   onSelect: () => void
-  onRefine: () => void
   // AC-6c: version counter from parent — triggers isFav re-derivation when favorites change
   favoritesVersion: number
   // AC-12d: V2 metadata props for result header display
@@ -36,7 +35,6 @@ export function TemplateDisplay({
   index: _index,
   isSelected,
   onSelect,
-  onRefine,
   favoritesVersion,
   generationMode,
   qualityScore,
@@ -101,9 +99,8 @@ export function TemplateDisplay({
   // Handle undefined gracefully — show [GENERATING] when props not yet available.
   const headerLabel = (() => {
     if (!generationMode) return '[GENERATING]'
-    const modeBadge = generationMode === 'craft' ? '[CRAFT]' : '[SLOP]'
     const qualityTag = qualityScore !== undefined ? ` Q:${qualityScore}/4` : ''
-    return `${modeBadge}${qualityTag}`
+    return `[GLYPH]${qualityTag}`
   })()
 
   return (
@@ -189,16 +186,6 @@ export function TemplateDisplay({
         </div>
 
         <div className="flex items-center gap-2">
-          <CyberButton
-            onClick={(e) => { e.stopPropagation(); onRefine(); }}
-            title="Ask AI to perfect this template"
-            style={{
-              borderColor: 'color-mix(in srgb, var(--theme-primary) 50%, transparent)',
-              color: 'var(--theme-primary)',
-            }}
-          >
-            [REFINE]
-          </CyberButton>
           <CyberButton
             onClick={handleShare}
             variant={shared ? 'active' : 'default'}

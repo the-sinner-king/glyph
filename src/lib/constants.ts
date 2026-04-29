@@ -19,47 +19,77 @@ export const SIZE_PRESETS = {
 
 export type SizePresetId = keyof typeof SIZE_PRESETS
 
-// Color themes for the UI
+// Color themes for the UI — multi-tone system: primary + secondary + accent per theme
 export const COLOR_THEMES = {
   amber: {
     id: 'amber',
     label: 'AMBER',
     primary: '#f59e0b',
+    secondary: '#06b6d4',
+    accent: '#ef4444',
     text: '#fcd34d',
     dim: '#78350f',
-    bg: 'radial-gradient(ellipse at center, #1a1000 0%, #0a0a0a 70%, #050505 100%)'
+    glow: 'rgba(245, 158, 11, 0.32)',
+    glow2: 'rgba(6, 182, 212, 0.22)',
+    border: '#3a2800',
+    inputBg: '#0d0900',
+    bg: 'radial-gradient(ellipse at 40% 60%, #1a1000 0%, #0d0800 50%, #050505 100%)',
   },
   green: {
     id: 'green',
     label: 'GREEN',
     primary: '#22c55e',
+    secondary: '#a855f7',
+    accent: '#f59e0b',
     text: '#86efac',
     dim: '#14532d',
-    bg: 'radial-gradient(ellipse at center, #001a00 0%, #0a0a0a 70%, #050505 100%)'
+    glow: 'rgba(34, 197, 94, 0.30)',
+    glow2: 'rgba(168, 85, 247, 0.22)',
+    border: '#002200',
+    inputBg: '#001200',
+    bg: 'radial-gradient(ellipse at 40% 60%, #001800 0%, #0a0a0a 70%, #050505 100%)',
   },
   blue: {
     id: 'blue',
     label: 'BLUE',
     primary: '#06b6d4',
+    secondary: '#f59e0b',
+    accent: '#8b5cf6',
     text: '#67e8f9',
     dim: '#164e63',
-    bg: 'radial-gradient(ellipse at center, #001a1a 0%, #0a0a0a 70%, #050505 100%)'
+    glow: 'rgba(6, 182, 212, 0.30)',
+    glow2: 'rgba(245, 158, 11, 0.22)',
+    border: '#001a2e',
+    inputBg: '#00101a',
+    bg: 'radial-gradient(ellipse at 40% 60%, #001a20 0%, #0a0a0a 70%, #050505 100%)',
   },
   pink: {
     id: 'pink',
     label: 'PINK',
     primary: '#ec4899',
+    secondary: '#00d4aa',
+    accent: '#ffd700',
     text: '#f9a8d4',
     dim: '#831843',
-    bg: 'radial-gradient(ellipse at center, #1a0010 0%, #0a0a0a 70%, #050505 100%)'
+    glow: 'rgba(236, 72, 153, 0.30)',
+    glow2: 'rgba(0, 212, 170, 0.22)',
+    border: '#3a0050',
+    inputBg: '#0d0010',
+    bg: 'radial-gradient(ellipse at 40% 60%, #1a0018 0%, #0d0008 50%, #050505 100%)',
   },
   white: {
     id: 'white',
     label: 'WHITE',
     primary: '#e5e5e5',
+    secondary: '#06b6d4',
+    accent: '#f59e0b',
     text: '#ffffff',
     dim: '#525252',
-    bg: 'radial-gradient(ellipse at center, #1a1a1a 0%, #0a0a0a 70%, #050505 100%)'
+    glow: 'rgba(229, 229, 229, 0.18)',
+    glow2: 'rgba(6, 182, 212, 0.15)',
+    border: '#2a2a2a',
+    inputBg: '#111111',
+    bg: 'radial-gradient(ellipse at 40% 60%, #1a1a1a 0%, #0a0a0a 70%, #050505 100%)',
   },
 } as const
 
@@ -68,7 +98,7 @@ export type ColorThemeId = keyof typeof COLOR_THEMES
 // App configuration
 export const CONFIG = {
   appName: 'GLYPH',
-  appVersion: '1.0.3',
+  appVersion: '1.0.5',
   appTagline: 'CYBERPUNK TEXT-UI GENERATOR',
 
   // Generation settings

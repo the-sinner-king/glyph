@@ -232,8 +232,14 @@ export function Generator() {
     const theme = COLOR_THEMES[themeId]
     if (!theme) return
     document.documentElement.style.setProperty('--theme-primary', theme.primary)
+    document.documentElement.style.setProperty('--theme-secondary', theme.secondary)
+    document.documentElement.style.setProperty('--theme-accent', theme.accent)
     document.documentElement.style.setProperty('--theme-text', theme.text)
     document.documentElement.style.setProperty('--theme-dim', theme.dim)
+    document.documentElement.style.setProperty('--theme-glow', theme.glow)
+    document.documentElement.style.setProperty('--theme-glow2', theme.glow2)
+    document.documentElement.style.setProperty('--theme-border', theme.border)
+    document.documentElement.style.setProperty('--theme-input-bg', theme.inputBg)
     document.body.style.background = theme.bg
     saveSettings({ colorTheme: themeId })
   }, [])
@@ -576,30 +582,10 @@ export function Generator() {
   )
 
   const renderGeneratingState = () => {
-    const isCraftArchitect = craftPhase === 'architect'
     return (
       <motion.div key="generating" {...ANIMATION.scaleFade} transition={ANIMATION.transition} className="w-full py-4">
         <TerminalPanel variant="pulse">
           <div className="py-6 px-4 space-y-4">
-            {/* Mode badge */}
-            <div className="flex items-center gap-3">
-              <span
-                className="font-mono text-xs tracking-widest px-2 py-0.5 rounded"
-                style={{
-                  border: '1px solid color-mix(in srgb, var(--theme-primary) 40%, transparent)',
-                  color: 'var(--theme-primary)',
-                  background: 'color-mix(in srgb, var(--theme-primary) 8%, transparent)',
-                }}
-              >
-                {mode.toUpperCase()} MODE
-              </span>
-              {isCraftArchitect && (
-                <span className="font-mono text-xs" style={{ color: 'var(--theme-dim)' }}>
-                  ARCHITECT PASS — thinking...
-                </span>
-              )}
-            </div>
-
             {/* ASCII bounce gauge */}
             <BouncingGauge prompt={currentPrompt} phase={craftPhase} />
 
@@ -645,7 +631,6 @@ export function Generator() {
           index={0}
           isSelected={true}
           onSelect={() => {}}
-          onRefine={() => {}}
           favoritesVersion={favoritesVersion}
           generationMode={result.mode}
           qualityScore={result.qualityScore}
@@ -728,13 +713,13 @@ export function Generator() {
 
       {/* Top bar */}
       <div className="fixed right-4 z-40 flex gap-2" style={{ top: isDemoMode ? '2.5rem' : '1rem' }}>
-        <CyberButton variant="ghost" onClick={() => setShowShortcutsModal(true)} className="p-2 font-mono" aria-label="Keyboard shortcuts" title="Keyboard Shortcuts (?)">?</CyberButton>
+        <CyberButton variant="ghost" onClick={() => setShowShortcutsModal(true)} className="p-3 font-mono text-base phosphor-glow-dim" aria-label="Keyboard shortcuts" title="Keyboard Shortcuts (?)">?</CyberButton>
         {status !== 'idle' && (
-          <CyberButton variant="ghost" onClick={() => setShowTitleForge(true)} className="p-2 font-mono" aria-label="Title Forge big text mode" title="Title Forge — Big Text (figlet fonts)">⬡</CyberButton>
+          <CyberButton variant="ghost" onClick={() => setShowTitleForge(true)} className="p-3 font-mono text-base phosphor-glow-dim" aria-label="Title Forge big text mode" title="Title Forge — Big Text (figlet fonts)">⬡</CyberButton>
         )}
-        <CyberButton variant="ghost" onClick={() => setShowFavoritesPanel(true)} className="p-2 font-mono" aria-label="Saved templates" title="Saved Templates (★)">★</CyberButton>
-        <CyberButton variant="ghost" onClick={() => setShowHistoryPanel(true)} className="p-2 font-mono" aria-label="Generation history" title="Generation History">☰</CyberButton>
-        <CyberButton variant="ghost" onClick={() => setShowApiKeyModal(true)} className="p-2 font-mono" aria-label="API key settings" title="API Key Settings">⚙</CyberButton>
+        <CyberButton variant="ghost" onClick={() => setShowFavoritesPanel(true)} className="p-3 font-mono text-base phosphor-glow-dim" aria-label="Saved templates" title="Saved Templates (★)">★</CyberButton>
+        <CyberButton variant="ghost" onClick={() => setShowHistoryPanel(true)} className="p-3 font-mono text-base phosphor-glow-dim" aria-label="Generation history" title="Generation History">☰</CyberButton>
+        <CyberButton variant="ghost" onClick={() => setShowApiKeyModal(true)} className="p-3 font-mono text-base phosphor-glow-dim" aria-label="API key settings" title="API Key Settings">⚙</CyberButton>
       </div>
 
       {/* Header */}
