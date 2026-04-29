@@ -76,7 +76,7 @@ No backend. No sign-up. Your API key lives in `localStorage` and travels nowhere
 │  But pobody's nerfect - and I'm sure we have much to learn.                  │
 │                                                                              │
 │  What matters to me is this shit is:                                         │
-│  FREE :: OPEN SOURCE :: LOCAL LLM USABLE                                     │
+│  FREE :: OPEN SOURCE :: BRING YOUR OWN KEY                                   │
 │                                                                              │
 │  No corpo bullshit - no cloud - just toys.                                   │
 │                                                                              │
