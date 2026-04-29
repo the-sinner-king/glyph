@@ -92,8 +92,6 @@ No backend. No sign-up. Your API key lives in `localStorage` and travels nowhere
 
 ## Demos
 
-![GLYPH Hero Demo](demo1.gif)
-
 ![GLYPH Demo 2](demo2.gif)
 
 ![GLYPH Demo 3](demo3.gif)
