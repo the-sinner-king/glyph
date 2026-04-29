@@ -2,6 +2,22 @@
 
 ---
 
+## [2026-04-29] v1.0.5 — ENHANCE mode, Title Forge Banner, multi-tone themes
+
+### Added
+- **⚡ Prompt Enhance** — Flash pre-pass expands short prompts (<120 chars) with style-aware context before generation. Toggle pill in CommandInput, persisted to settings.
+- **TitleForgeBanner** — prominent discovery module below example prompts. Cycles demo words (GLYPH/FORGE/VOID/NEON) through 4 fonts; live preview of user-typed text while fonts rotate every 2.8s.
+- **AI figlet title injection** — `[FIGLET: TEXT]` markers in AI output are replaced client-side with real ANSI Shadow figlet art via `applyFigletTitles()`.
+- **Multi-tone theme system** — each of the 5 themes now has independent `--theme-secondary`, `--theme-accent`, and `--theme-glow` tokens. Amber+cyan, green+purple, blue+amber, pink+teal, white+cyan pairings.
+- **NORTH_STAR_LAUNCH.md** — launch checklist, GIF recording spec, social blitz plan, v2.0 ideas archive.
+
+### Changed
+- **Scrollbar** — was amber-hardcoded 8px; now 3px theme-aware via `--theme-primary` with reduced opacity.
+- **Top-right icon buttons** — larger hit area (`p-2` → `p-3`) with `phosphor-glow-dim` effect.
+- **README** — updated to v1.0.5 with correct feature coverage (ENHANCE, Title Forge, skill pills, border selector).
+
+---
+
 ## [2026-03-23] v1.0.4 — README output gallery, AI credit, dead code removal
 
 ### Added
